@@ -1,0 +1,12 @@
+.badge{
+    position: absolute;
+    top: 2%;
+}
+
+.badge-left{
+    left: 2%;
+}
+
+.badge-right{
+    right: 2%;
+}
