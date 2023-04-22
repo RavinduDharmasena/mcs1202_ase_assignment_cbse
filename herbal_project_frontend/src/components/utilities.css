@@ -24,3 +24,27 @@
 .pb-1{
     padding-bottom: 1rem !important;
 }
+
+.w-55p{
+    width: 55%;
+}
+
+.w-45p{
+    width: 45%;
+}
+
+.w-25p{
+    width: 25%;
+}
+
+.w-75p{
+    width: 75%;
+}
+
+.m1{
+    margin: 1rem;
+}
+
+.p1{
+    padding: 1rem;
+}

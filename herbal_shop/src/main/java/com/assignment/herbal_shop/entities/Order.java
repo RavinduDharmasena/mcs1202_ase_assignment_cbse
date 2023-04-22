@@ -63,5 +63,5 @@ public class Order {
     
     @JsonIgnore
     @OneToMany(mappedBy = "order")
-	private final Set<OrderItem> orderItems = new HashSet<>();
+	private Set<OrderItem> orderItems = new HashSet<>();
 }

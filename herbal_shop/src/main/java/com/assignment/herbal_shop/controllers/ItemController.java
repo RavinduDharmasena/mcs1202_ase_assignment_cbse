@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.assignment.herbal_shop.entities.Item;
-import com.assignment.herbal_shop.response.ItemEntityCollectionResponse;
 import com.assignment.herbal_shop.response.ErrorResponse;
-import com.assignment.herbal_shop.response.SingleItemEntityResponse;
 import com.assignment.herbal_shop.service.ItemService;
 
 @RestController
@@ -25,11 +23,8 @@ public class ItemController {
 
 	@GetMapping(path = "/items")
 	@CrossOrigin
-    public ResponseEntity<ItemEntityCollectionResponse> getItems() {
-		ItemEntityCollectionResponse successDataResponse = new ItemEntityCollectionResponse();
-		successDataResponse.setItems(this.itemService.getItems());
-		successDataResponse.setHttpStatusCode(HttpStatus.OK);
-		ResponseEntity<ItemEntityCollectionResponse> response = new ResponseEntity<ItemEntityCollectionResponse>(successDataResponse,successDataResponse.getHttpStatusCode());
+    public ResponseEntity<?> getItems() {
+		ResponseEntity<?> response = new ResponseEntity<>(this.itemService.getItems(),HttpStatus.OK);
 		return response;
     }
 	
@@ -39,10 +34,7 @@ public class ItemController {
 		Item savedItem = this.itemService.insertItem(item);
 		
 		if(this.itemService.checkEntityExists(savedItem.getId())) {
-			SingleItemEntityResponse successDataResponse = new SingleItemEntityResponse();
-			successDataResponse.setItem(savedItem);
-			successDataResponse.setHttpStatusCode(HttpStatus.OK);
-			ResponseEntity<SingleItemEntityResponse> response = new ResponseEntity<SingleItemEntityResponse>(successDataResponse,successDataResponse.getHttpStatusCode());
+			ResponseEntity<?> response = new ResponseEntity<>(savedItem,HttpStatus.CREATED);
 			return response;
 		}
 		else {
@@ -59,11 +51,8 @@ public class ItemController {
 	@CrossOrigin
 	public ResponseEntity<?> updateItem(@RequestBody Item item, @PathVariable Long itemId){
 		if(this.itemService.checkEntityExists(itemId)) {
-			Item savedItem = this.itemService.updateItem(item,itemId);
-			SingleItemEntityResponse successDataResponse = new SingleItemEntityResponse();
-			successDataResponse.setItem(savedItem);
-			successDataResponse.setHttpStatusCode(HttpStatus.OK);
-			ResponseEntity<SingleItemEntityResponse> response = new ResponseEntity<SingleItemEntityResponse>(successDataResponse,successDataResponse.getHttpStatusCode());
+			Item updatedItem = this.itemService.updateItem(item,itemId);
+			ResponseEntity<?> response = new ResponseEntity<>(updatedItem,HttpStatus.OK);
 			return response;
 		}
 		else {

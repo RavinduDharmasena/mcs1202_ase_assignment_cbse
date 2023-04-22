@@ -72,7 +72,7 @@ function PaymentForm() {
                 const timestamp = Date.now();
                 const randomNumber = Math.floor(Math.random() * 1000000);
                 const transactionId = `${timestamp}-${randomNumber}`;
-                url += "transactionId=" + transactionId + "&status=declined&message=" + encodeURI("Transaction timeout is exceeded");
+                url += "orderId=" + orderId + "transactionId=" + transactionId + "&status=declined&message=" + encodeURI("Transaction timeout is exceeded");
                 new Promise((resolve, reject) => {
                     paymentContext.setShow(true);
                     paymentContext.setPaymentStatus('otpExpired');
@@ -108,7 +108,9 @@ function PaymentForm() {
 
                 const redirectToMerchant = () => {
                     localStorage.removeItem("otp");
-                    window.location.replace(decodeURI(successUrl));
+                    let url = decodeURI(successUrl);
+                    url += "orderId=" + orderId + "transactionId=" + transactionId + "&status=approved&message=" + encodeURI("Transaction processed Successfully");
+                    window.location.replace(url);
                 }
 
                 showPaymentProcessDialog().then(() => {

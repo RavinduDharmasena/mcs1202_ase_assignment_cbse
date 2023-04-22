@@ -15,9 +15,8 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderPostDTO{
+public class OrderGetDto {
 
 	private Order order;
-    
-    private ArrayList<OrderedItemsPostDTO> items;
+	private ArrayList<OrderedItemsGetDto> orderedItems;
 }

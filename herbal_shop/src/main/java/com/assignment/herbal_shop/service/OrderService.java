@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.assignment.herbal_shop.dto.OrderGetDto;
 import com.assignment.herbal_shop.dto.OrderPostDTO;
-import com.assignment.herbal_shop.dto.OrderedItemsDTO;
+import com.assignment.herbal_shop.dto.OrderedItemsGetDto;
+import com.assignment.herbal_shop.dto.OrderedItemsPostDTO;
 import com.assignment.herbal_shop.entities.Item;
 import com.assignment.herbal_shop.entities.Order;
 import com.assignment.herbal_shop.entities.OrderItem;
@@ -30,8 +32,29 @@ public class OrderService {
 	@Autowired
 	private OrderItemRepository orderItemRepository;
 
+	private OrderGetDto prepareOrderDto(Order order) {
+		OrderGetDto orderGetDTO = new OrderGetDto();
+		orderGetDTO.setOrder(order);
+		ArrayList<OrderedItemsGetDto> orderedItems = new ArrayList<>();
+		for (OrderItem orderItem : order.getOrderItems()) {
+			OrderedItemsGetDto orderedItemsGetDto = new OrderedItemsGetDto();
+			orderedItemsGetDto.setItem(orderItem.getItem());
+			orderedItemsGetDto.setItemAmount(orderItem.getNoOfItems());
+			orderedItemsGetDto.setTotalItemPrice(orderItem.getAmount());
+			orderedItems.add(orderedItemsGetDto);
+		}
+
+		orderGetDTO.setOrderedItems(orderedItems);
+		return orderGetDTO;
+	}
+	
 	public ArrayList<Order> getOrders() {
 		return new ArrayList<>(this.orderRepository.findAll());
+	}
+	
+	public OrderGetDto getOrderById(Long orderId) {
+		Order order = this.orderRepository.findById(orderId).get();
+		return this.prepareOrderDto(order);
 	}
 
 	public Order insertOrder(OrderPostDTO orderPostDto) {
@@ -39,7 +62,7 @@ public class OrderService {
 		float commission = 0;
 		Order order = this.orderRepository.save(orderPostDto.getOrder());
 
-		for (OrderedItemsDTO orderedItem : orderPostDto.getItems()) {
+		for (OrderedItemsPostDTO orderedItem : orderPostDto.getItems()) {
 			Item item = this.itemRepository.findById(orderedItem.getItemId()).get();
 			OrderItem orderItem = new OrderItem();
 			orderItem.setItem(item);
