@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Col, Row, Button, Form } from 'react-bootstrap';
+import { Col, Row, Button, Form, Card } from 'react-bootstrap';
 import { PaymentContext } from '../PaymentContext';
 
 function PaymentForm() {
@@ -53,6 +53,13 @@ function PaymentForm() {
         <Form.Control type="number" placeholder="Enter OTP" name="otp" onChange={setOtpInput} />
     </Form.Group> : null
 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    
+    const sessionId = urlParams.get('sessionId');
+    const orderId = urlParams.get('orderId');
+    const amount = urlParams.get('amount');
+
     return (
         <Form onSubmit={submitForm}>
             <Form.Group className="mb-3">
@@ -104,6 +111,27 @@ function PaymentForm() {
                 </Row>
             </Form.Group>
             {otpField}
+            <div style={{ marginBottom: "10px" }}>
+                <Card>
+                    <Card.Body>
+                        <h5>Order Details</h5>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>Order ID</td>
+                                    <td>:</td>
+                                    <td>{orderId}</td>
+                                </tr>
+                                <tr>
+                                    <td>Amount</td>
+                                    <td>:</td>
+                                    <td>Rs.{amount}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </Card.Body>
+                </Card>
+            </div>
             {/* <Form.Group className="mb-3" controlId="formBasicCheckbox">
         <Form.Check type="checkbox" label="Check me out" />
       </Form.Group> */}
