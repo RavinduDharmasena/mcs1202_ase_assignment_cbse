@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { ShopContext } from "../ShopContext";
 import { Button, Table } from "react-bootstrap";
 import recipe from '../assets/recipe.jpg';
@@ -29,13 +29,11 @@ function CartTable(props) {
 
     let otherExpenseRows = null
     
-    if (props.otherExpenses && props.otherExpenses.length !== 0) {
+    if (props.otherExpenses) {
         console.log(props.otherExpenses);
-        const otherExpenses = Object.keys(props.otherExpenses);
-        otherExpenseRows = otherExpenses.map((otherExpense,i) => {
-            total += props.otherExpenses[otherExpense];
-            const convertedStr = otherExpense.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-            return <tr key={i}><td colSpan={3}>{convertedStr}</td><td>Rs. {props.otherExpenses[otherExpense]}.00</td></tr>
+        otherExpenseRows = props.otherExpenses.map((otherExpense,i) => {
+            total += otherExpense.price;
+            return <tr key={i}><td colSpan={3}>{otherExpense.name}</td><td>Rs. {otherExpense.price}.00</td></tr>
         })
     }
 

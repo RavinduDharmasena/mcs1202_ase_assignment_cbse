@@ -1,4 +1,4 @@
-package com.payment.payment_gateway.service;
+package com.payment.payment_gateway.services;
 
 import javax.validation.constraints.NotBlank;
 

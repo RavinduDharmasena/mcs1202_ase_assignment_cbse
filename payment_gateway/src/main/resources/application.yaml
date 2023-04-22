@@ -1,0 +1,18 @@
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:paymentdb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+  h2:
+    console.enabled: true
+server:
+  port: 8081
+twilio:
+  account_sid: abcd
+  auth_token: abcd
+  trial_number: abcd

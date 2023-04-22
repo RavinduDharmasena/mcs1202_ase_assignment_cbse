@@ -1,42 +1,127 @@
 import { useContext, useState } from 'react';
 import { Col, Row, Button, Form, Card } from 'react-bootstrap';
 import { PaymentContext } from '../PaymentContext';
+import axios from 'axios';
 
 function PaymentForm() {
     const [isDataEnetered, setIsDataEntered] = useState(false);
     const [formData, setFormData] = useState({
-        cardNumber: '',
-        cvv: '',
+        creditCardNumber: '',
+        cvc: '',
         expiryMonth: '',
         expiryYear: ''
     });
     const [otp, setOtp] = useState(null);
     const paymentContext = useContext(PaymentContext);
 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+
+    const sessionId = urlParams.get('sessionId');
+    const orderId = urlParams.get('orderId');
+    const amount = urlParams.get('amount');
+    const successUrl = urlParams.get('successUrl');
+    const failureUrl = urlParams.get('failureUrl');
+
     const submitForm = (event) => {
-        if (!otp) {
-            setIsDataEntered(true);
-            const otp = Math.floor(100000 + Math.random() * 900000).toString();
-            localStorage.setItem("otp", otp);
-            console.log(localStorage.getItem("otp"));
-        }
-        else {
-            if (otp === localStorage.getItem("otp")) {
-                paymentContext.setShow(true);
-                paymentContext.setPaymentStatus('processing');
-                setTimeout(() => {
-                    paymentContext.setPaymentStatus('processSuccess');
-                }, 5000);
-                setTimeout(() => {
-                    paymentContext.setShow(false);
-                }, 10000);
+        event.preventDefault();
+        axios.post("http://localhost:8081/payment/validate", formData).then((response) => {
+            if (response.status !== 200) {
+                throw new Error("Invalid card details");
             }
             else {
-                paymentContext.setPaymentStatus('processFailed');
+                setIsDataEntered(true);
+                const otp = Math.floor(100000 + Math.random() * 900000).toString();
+                localStorage.setItem("otp", otp);
+
+                let now = new Date();
+                let expirationTime = new Date(now.getTime() + 20000);
+                localStorage.setItem("otpExpiry", expirationTime);
+                return otp;
             }
-            localStorage.removeItem("otp");
+        }).then((otp) => {
+            // axios.post("http://localhost:8081/payment/sms", {
+            //     phoneNumber: "+94711835190",
+            //     message: "Your OTP is " + otp
+            // }).then((result) => {
+            //     console.log("sms sent");
+            // })
+            console.log(otp);
+        }).catch((error) => {
+            paymentContext.setPaymentStatus('paymentDataInvalid');
+            setIsDataEntered(false);
+            paymentContext.setShow(true);
+            console.error(error);
+        })
+    }
+
+    const checkOtp = () => {
+        if (otp === localStorage.getItem("otp")) {
+            if (new Date() > new Date(localStorage.getItem('otpExpiry'))) {
+                let url = new URL(decodeURI(failureUrl));
+                const paramsIterator = url.searchParams.entries();
+                const hasParams = !paramsIterator.next().done;
+
+                if (hasParams) {
+                    url += "&";
+                }
+                else {
+                    url += "?";
+                }
+
+                const timestamp = Date.now();
+                const randomNumber = Math.floor(Math.random() * 1000000);
+                const transactionId = `${timestamp}-${randomNumber}`;
+                url += "transactionId=" + transactionId + "&status=declined&message=" + encodeURI("Transaction timeout is exceeded");
+                new Promise((resolve, reject) => {
+                    paymentContext.setShow(true);
+                    paymentContext.setPaymentStatus('otpExpired');
+                    setTimeout(() => {
+                        resolve(true);
+                    }, 3000)
+                }).then(() => {
+                    setTimeout(() => {
+                        localStorage.removeItem("otp");
+                        window.location.replace(url);
+                    }, 3000);
+                })
+            }
+            else {
+                const showPaymentProcessDialog = () => {
+                    return new Promise((resolve, reject) => {
+                        paymentContext.setShow(true);
+                        paymentContext.setPaymentStatus('processing');
+                        setTimeout(() => {
+                            resolve();
+                        }, 3000);
+                    });
+                }
+
+                const showPaymentSuccessDialog = () => {
+                    return new Promise((resolve, reject) => {
+                        paymentContext.setPaymentStatus('processSuccess');
+                        setTimeout(() => {
+                            resolve();
+                        }, 5000);
+                    });
+                }
+
+                const redirectToMerchant = () => {
+                    localStorage.removeItem("otp");
+                    window.location.replace(decodeURI(successUrl));
+                }
+
+                showPaymentProcessDialog().then(() => {
+                    showPaymentSuccessDialog().then(() => {
+                        redirectToMerchant();
+                    })
+                })
+            }
         }
-        event.preventDefault()
+        else {
+            paymentContext.setPaymentStatus('processFailed');
+        }
+        localStorage.removeItem("otp");
     }
 
     const handleInputChange = (event) => {
@@ -53,22 +138,15 @@ function PaymentForm() {
         <Form.Control type="number" placeholder="Enter OTP" name="otp" onChange={setOtpInput} />
     </Form.Group> : null
 
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    
-    const sessionId = urlParams.get('sessionId');
-    const orderId = urlParams.get('orderId');
-    const amount = urlParams.get('amount');
-
     return (
-        <Form onSubmit={submitForm}>
+        <Form>
             <Form.Group className="mb-3">
-                <Form.Label>Card Number</Form.Label>
-                <Form.Control type="number" placeholder="Enter Card Number" name="cardNumber" disabled={isDataEnetered} onChange={handleInputChange} />
+                <Form.Label>Credit Card Number</Form.Label>
+                <Form.Control type="number" placeholder="Enter Credit Card Number" name="creditCardNumber" disabled={isDataEnetered} onChange={handleInputChange} />
             </Form.Group>
             <Form.Group className="mb-3">
-                <Form.Label>CVV</Form.Label>
-                <Form.Control type="number" placeholder="Enter CVV" name="cvv" disabled={isDataEnetered} onChange={handleInputChange} />
+                <Form.Label>CVC</Form.Label>
+                <Form.Control type="number" placeholder="Enter CVC" name="cvc" disabled={isDataEnetered} onChange={handleInputChange} />
             </Form.Group>
             <Form.Group className="mb-3">
                 <Row>
@@ -135,8 +213,8 @@ function PaymentForm() {
             {/* <Form.Group className="mb-3" controlId="formBasicCheckbox">
         <Form.Check type="checkbox" label="Check me out" />
       </Form.Group> */}
-            <Button variant="primary" type="submit">
-                Submit
+            <Button variant="primary" type="button" onClick={(isDataEnetered) ? checkOtp : submitForm}>
+                {(isDataEnetered) ? "Send the OTP" : "Submit"}
             </Button>
         </Form>
     );

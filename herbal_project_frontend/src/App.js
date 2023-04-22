@@ -3,12 +3,20 @@ import './App.css';
 import HomePage from "./pages/HomePage";
 import NotFoundPage from './pages/NotFoundPage';
 import OrderSummaryPage from './pages/OrderSummaryPage';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ShopContext } from './ShopContext';
+import OrderSuccessPage from './pages/OrderSuccessPage';
+import OrderFailurePage from './pages/OrderFailurePage';
 
 function App() {
   const [items, setItems] = useState([]);
   const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    if (localStorage.getItem("shoppingData")) {
+      setItems(JSON.parse(localStorage.getItem("shoppingData")).items);
+    }
+  },[]);
 
   const shopContextValues = { items: items, show: show, setShow: setShow, setItems: setItems, otherExpenses: [] }
 
@@ -18,6 +26,8 @@ function App() {
         <Routes>
           <Route path='/' element={<HomePage />} />
           <Route path='/summary' element={<OrderSummaryPage />} />
+          <Route path='/order_complete' element={<OrderSuccessPage />} />
+          <Route path='/order_failure' element={<OrderFailurePage />} />
           <Route path='*' element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>

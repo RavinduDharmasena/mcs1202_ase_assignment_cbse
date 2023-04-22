@@ -4,6 +4,9 @@ export const ShopContext = createContext(
     {
         items: [],
         show: false,
-        otherExpenses: {}
+        otherExpenses: {},
+        setContextData: function(data) {
+            localStorage.setItem("shoppingData",data);
+        }
     }
 );

@@ -36,6 +36,7 @@ function ItemCard(props) {
             setCurrentItem(item);
         }
         shopContext.setItems(items);
+        localStorage.setItem("shoppingData", shopContext);
     }
 
     const itemBadge = currentItem.itemAmount ? <Badge bg="success" className='badge badge-right uppercase'>{currentItem.itemAmount} items added to the cart</Badge> : null;

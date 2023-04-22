@@ -7,7 +7,7 @@ import './CartModal.css';
 import { useNavigate } from 'react-router-dom';
 import CartTable from './CartTable';
 
-function CartModal() {
+function CartModal(props) {
   const shopContext = useContext(ShopContext);
   const navigate = useNavigate();
 
@@ -15,7 +15,13 @@ function CartModal() {
     navigate("/summary");
   }
 
-  const modalBody = (shopContext.items.length > 0) ? <CartTable showOtherExpenses={false}/> : <p>No Items Added to the Cart</p>
+  let modalBody = null;
+  if(props.body){
+    modalBody = props.body;
+  }
+  else{
+    modalBody = (shopContext.items.length > 0) ? <CartTable showOtherExpenses={false}/> : <p>No Items Added to the Cart</p>
+  }
 
   return (
     <Modal show={shopContext.show} onHide={() => { shopContext.setShow(false) }}>

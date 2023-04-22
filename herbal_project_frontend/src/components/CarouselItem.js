@@ -2,6 +2,7 @@ import Carousel from 'react-bootstrap/Carousel';
 import sliderImg1 from '../assets/slider_image_1.jpg';
 import sliderImg2 from '../assets/slider_image_2.jpg';
 import sliderImg3 from '../assets/slider_image_3.jpg';
+
 function CarouselItem() {
   return (
     <Carousel>

@@ -13,6 +13,9 @@ function PaymentPage() {
     }
 
     let paymentModalBodyText = null;
+    let okButton = null;
+    let header = "Payment Is Processing";
+
     if (paymentStatus === "processing") {
         paymentModalBodyText = <Modal.Body>
             <Spinner animation="border" role="status">
@@ -20,16 +23,32 @@ function PaymentPage() {
             </Spinner>
             <span style={{ marginLeft: "10px" }}>Hold for a Moment. We are processing your payment</span>
         </Modal.Body>
+
     }
-    else if(paymentStatus === "processSuccess"){
+    else if (paymentStatus === "processSuccess") {
         paymentModalBodyText = <Modal.Body>
             Payment is Approved. Please wait while we redirect to the merchant
         </Modal.Body>
     }
-    else if(paymentStatus === "processFailed"){
+    else if (paymentStatus === "processFailed") {
         paymentModalBodyText = <Modal.Body>
             Payment is Failed. Please wait while we redirect to the merchant
         </Modal.Body>
+    }
+    else if (paymentStatus === "paymentDataInvalid") {
+        paymentModalBodyText = <Modal.Body>
+            Payment details you entered is invalid
+        </Modal.Body>
+        okButton = <Button variant="secondary" onClick={handleClose}>
+            Close
+        </Button>
+        header = "Payment Error";
+    }
+    else if (paymentStatus === "otpExpired") {
+        paymentModalBodyText = <Modal.Body>
+            Transaction is declined due to the Invalid OTP. Please wait while we redirect to the merchant
+        </Modal.Body>
+        header = "Payment Declined";
     }
 
     return (
@@ -39,10 +58,11 @@ function PaymentPage() {
                 <PaymentForm />
                 <Modal show={show} onHide={handleClose}>
                     <Modal.Header closeButton>
-                        <Modal.Title>Payment Is Processing</Modal.Title>
+                        <Modal.Title>{header}</Modal.Title>
                     </Modal.Header>
                     {paymentModalBodyText}
                     <Modal.Footer>
+                        {okButton}
                         {/* <Button variant="secondary" onClick={handleClose}>
                             Close
                         </Button>

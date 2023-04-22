@@ -55,6 +55,9 @@ public class Order {
     @Column(name = "transaction_id",nullable = true)
     private String transactionId;
     
+    @Column(name = "delivery_charge",nullable = true)
+    private float deliveryCharge;
+    
     @Column(name = "commission")
     private float commission;
     
