@@ -109,6 +109,9 @@ function PaymentForm() {
                 const redirectToMerchant = () => {
                     localStorage.removeItem("otp");
                     let url = decodeURI(successUrl);
+                    const length = 10;
+                    const randomString = Math.random().toString(36).substring(2, length + 2);
+                    const transactionId = Date.now() + '-' + randomString;
                     url += "orderId=" + orderId + "transactionId=" + transactionId + "&status=approved&message=" + encodeURI("Transaction processed Successfully");
                     window.location.replace(url);
                 }
