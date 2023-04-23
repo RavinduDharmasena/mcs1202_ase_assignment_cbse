@@ -7,7 +7,6 @@ function CartTable(props) {
     const shopContext = useContext(ShopContext);
 
     const removeItem = (item, index) => {
-        console.log(item, index);
         const existingItems = shopContext.items;
         existingItems.splice(index, 1);
         shopContext.setItems(existingItems);
@@ -40,7 +39,6 @@ function CartTable(props) {
     let otherExpenseRows = null
 
     if (props.otherExpenses) {
-        console.log(props.otherExpenses);
         otherExpenseRows = props.otherExpenses.map((otherExpense, i) => {
             total += otherExpense.price;
             return <tr key={i}><td colSpan={3}>{otherExpense.name}</td><td>Rs. {otherExpense.price}.00</td></tr>
