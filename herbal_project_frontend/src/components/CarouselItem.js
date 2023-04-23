@@ -14,8 +14,8 @@ function CarouselItem() {
           height='350px'
         />
         <Carousel.Caption>
-          <h3>First slide label</h3>
-          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+          <h3>Power of Nature's Remedies</h3>
+          <p>Discover the power of nature's remedies at our herbal shop carousel!</p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item interval={2000}>
@@ -26,8 +26,8 @@ function CarouselItem() {
           height='350px'
         />
         <Carousel.Caption>
-          <h3>Second slide label</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <h3>Fragrance and Beauty</h3>
+          <p>Experience the fragrance and beauty of our hand-picked herbs on our carousel.</p>
         </Carousel.Caption>
       </Carousel.Item>
       <Carousel.Item interval={2000}>
@@ -38,9 +38,9 @@ function CarouselItem() {
           height='350px'
         />
         <Carousel.Caption>
-          <h3>Third slide label</h3>
+          <h3>Better Health and Wellness</h3>
           <p>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur.
+            Let our herbal carousel take you on a journey to better health and wellness.
           </p>
         </Carousel.Caption>
       </Carousel.Item>
