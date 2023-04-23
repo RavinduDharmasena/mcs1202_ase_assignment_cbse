@@ -29,7 +29,7 @@ public class PaymentController {
 	public ResponseEntity<?> validateCreditCardData(@Valid @RequestBody CreditCard creditCard) {
 		CreditCard existingCreditCard = this.paymentService.getCreditCardData(creditCard);
 		if(existingCreditCard != null) {
-			return new ResponseEntity<>("AUTHORISED",HttpStatus.OK);
+			return new ResponseEntity<>(existingCreditCard,HttpStatus.OK);
 		}
 		else {
 			return new ResponseEntity<>("UNAUTHORISED",HttpStatus.UNAUTHORIZED);
