@@ -35,10 +35,10 @@ function OrderSummaryPage() {
     }
 
     const submitForm = () => {
-        // if(!licenseAcceptance){
-        //     alert('Please accept license agreement');
-        //     return;
-        // }
+        if(!licenseAcceptance){
+            alert('Please accept license agreement');
+            return;
+        }
 
         let total = deliveryCharge;
         const items = orderInformation.items.map((item) => {
@@ -167,7 +167,7 @@ function OrderSummaryPage() {
                         <Form.Control type="number" name="zipCode" placeholder="Zip Code" onChange={(event) => { updateOrderInformation(event) }} />
                     </Form.Group>
                     <Form.Group className="mb-3">
-                        <Form.Check type="checkbox" defaultChecked={licenseAcceptance} label="I accept the terms and conditions" onClick={() => toggleLicenseAcceptance} />
+                        <Form.Check type="checkbox" defaultChecked={licenseAcceptance} label="I accept the terms and conditions" onClick={() => toggleLicenseAcceptance()} />
                     </Form.Group>
                     <Button variant="primary" type="button" onClick={submitForm}>
                         PAY NOW
