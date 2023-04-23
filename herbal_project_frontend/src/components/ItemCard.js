@@ -3,12 +3,12 @@ import Card from 'react-bootstrap/Card';
 import Badge from 'react-bootstrap/Badge';
 import './utilities.css';
 import './ItemCard.css';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ShopContext } from '../ShopContext';
 
 function ItemCard(props) {
     const shopContext = useContext(ShopContext);
-    const [currentItem, setCurrentItem] = useState(props.itemData);
+    const [itemAmount,setItemAmount] = useState(0);
 
     const prepareAndShowModal = () => {
         shopContext.setShow(true);
@@ -20,8 +20,8 @@ function ItemCard(props) {
         if (existingItemIndex !== -1) {
             const item = items[existingItemIndex];
             item.itemAmount++;
+            item.totalItemPrice = item.unitPrice * item.itemAmount;
             items[existingItemIndex] = item;
-            setCurrentItem(item);
         }
         else {
             const item = {
@@ -33,13 +33,27 @@ function ItemCard(props) {
                 itemAmount: 1
             };
             items.push(item);
-            setCurrentItem(item);
         }
         shopContext.setItems(items);
-        localStorage.setItem("shoppingData", shopContext);
     }
 
-    const itemBadge = currentItem.itemAmount ? <Badge bg="success" className='badge badge-right uppercase'>{currentItem.itemAmount} items added to the cart</Badge> : null;
+    useEffect(() => {
+        const existingContextItem = shopContext.items.filter((contextItem) => {
+            return props.itemData.code === contextItem.code;
+        });
+
+        let existingCurrentItem = props.itemData;
+        if (existingContextItem.length === 0) {
+            existingCurrentItem.itemAmount = 0;
+            setItemAmount(0);
+        }
+        else{
+            existingCurrentItem.itemAmount = existingContextItem[0].itemAmount;
+            setItemAmount(existingCurrentItem.itemAmount);
+        }
+    })
+
+    const itemBadge = (itemAmount > 0) ? <Badge bg="success" className='badge badge-right uppercase'>{itemAmount} items added to the cart</Badge> : null;
 
     return (
         <Card className='inline-block m-1' style={{ width: '18rem' }}>

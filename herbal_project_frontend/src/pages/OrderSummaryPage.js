@@ -18,44 +18,11 @@ function OrderSummaryPage() {
     const navigate = useNavigate();
 
     const updateOrderAndDeliveryInformation = (event, expenseName, expenseAmount) => {
-        console.log(event.target.value, expenseName, expenseAmount);
         setDeliveryCharge(expenseAmount);
         const orderInformationObj = orderInformation;
         orderInformationObj[event.target.name] = event.target.value
         setOrderInformation(orderInformation);
     }
-
-    useEffect(() => {
-        if (!shopContext) {
-            return;
-        }
-    //     const shopData = shopContext;
-    //     shopData.items = orderInformation.items;
-    //     shopData.orderInformation = orderInformation;
-    //     shopData.deliveryCharge = deliveryCharge;
-    //     shopData.licenseAcceptance = licenseAcceptance;
-        localStorage.setItem('shoppingData', JSON.stringify(shopContext));
-    //     // console.log(localStorage.getItem('shoppingData'));
-    }, []);
-
-    useEffect(() => {
-        if (!shopContext) {
-            const context = JSON.parse(localStorage.getItem('shoppingData'));
-            setOrderInformation(context.orderInformation);
-            setDeliveryCharge(context.deliveryCharge)
-            setLicenseAcceptance(context.setLicenseAcceptance);
-        }
-        else {
-            const shopData = shopContext;
-            // shopData.items = orderInformation.items;
-            shopData.orderInformation = orderInformation;
-            shopData.deliveryCharge = deliveryCharge;
-            shopData.licenseAcceptance = licenseAcceptance;
-            // shopContext.setContextData(JSON.stringify(shopData));
-            localStorage.setItem('shoppingData', JSON.stringify(shopData));
-        }
-        // console.log(localStorage.getItem('shoppingData'));
-    }, [shopContext, orderInformation, deliveryCharge, licenseAcceptance]);
 
     const toggleLicenseAcceptance = () => {
         setLicenseAcceptance(!licenseAcceptance);
@@ -87,15 +54,14 @@ function OrderSummaryPage() {
             items: items
         };
         orderInformationData.order.deliveryCharge = deliveryCharge;
-        // delete orderInformationData.order.items;
         orderInformationData.items = items;
 
-        // console.log(config.baseUrl);
         axios.post(config.baseUrl + "orders", orderInformationData).then((response) => {
-            if (response.status === 200) {
-                console.log(response.data);
-                window.location.href = "http://localhost:3001/pay?orderId=" + response.data.order.id + "&amount=" + total + "&currency=LKR&session=" + Math.random().toString(36).substring(2, 12) + "&successUrl=http%3A%2F%2Flocalhost%3A3000%2Forder_complete&failureUrl=http%3A%2F%2Flocalhost%3A3000%2Forder_failure";
+            if (response.status === 201) {
+                window.location.href = "http://localhost:3001/pay?orderId=" + response.data.id + "&amount=" + total + "&currency=LKR&session=" + Math.random().toString(36).substring(2, 12) + "&successUrl=http%3A%2F%2Flocalhost%3A3000%2Forder_complete&failureUrl=http%3A%2F%2Flocalhost%3A3000%2Forder_failure";
             }
+        }).catch((error) => {
+            console.error(error);
         });
     }
 

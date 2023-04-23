@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { ShopContext } from '../ShopContext';
@@ -10,17 +10,24 @@ import CartTable from './CartTable';
 function CartModal(props) {
   const shopContext = useContext(ShopContext);
   const navigate = useNavigate();
+  const [shouldRender,setShouldRender] = useState(false);
 
   const goToPayments = () => {
     navigate("/summary");
   }
+
+  useEffect(() => {
+    if(shouldRender){
+      setShouldRender(false);
+    }
+  }, [shouldRender]);
 
   let modalBody = null;
   if(props.body){
     modalBody = props.body;
   }
   else{
-    modalBody = (shopContext.items.length > 0) ? <CartTable showOtherExpenses={false}/> : <p>No Items Added to the Cart</p>
+    modalBody = (shopContext.items.length > 0) ? <CartTable showOtherExpenses={false} setShouldRender={setShouldRender}/> : <p>No Items Added to the Cart</p>
   }
 
   return (

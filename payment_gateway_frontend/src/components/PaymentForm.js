@@ -35,18 +35,18 @@ function PaymentForm() {
                 localStorage.setItem("otp", otp);
 
                 let now = new Date();
-                let expirationTime = new Date(now.getTime() + 20000);
+                let expirationTime = new Date(now.getTime() + 60000);
                 localStorage.setItem("otpExpiry", expirationTime);
-                return otp;
+                return {otp:otp,mobileNumber:response.data.mobileNumber};
             }
-        }).then((otp) => {
-            // axios.post("http://localhost:8081/payment/sms", {
-            //     phoneNumber: "+94711835190",
-            //     message: "Your OTP is " + otp
-            // }).then((result) => {
-            //     console.log("sms sent");
-            // })
-            console.log(otp);
+        }).then((smsData) => {
+            axios.post("http://localhost:8081/payment/sms", {
+                phoneNumber: smsData.mobileNumber,
+                message: "Your OTP is " + smsData.otp
+            }).then((result) => {
+                console.log("sms sent");
+            })
+            console.log(smsData);
         }).catch((error) => {
             paymentContext.setPaymentStatus('paymentDataInvalid');
             setIsDataEntered(false);
@@ -72,7 +72,7 @@ function PaymentForm() {
                 const timestamp = Date.now();
                 const randomNumber = Math.floor(Math.random() * 1000000);
                 const transactionId = `${timestamp}-${randomNumber}`;
-                url += "orderId=" + orderId + "transactionId=" + transactionId + "&status=declined&message=" + encodeURI("Transaction timeout is exceeded");
+                url += "orderId=" + orderId + "&transactionId=" + transactionId + "&status=declined&message=" + encodeURI("Transaction timeout is exceeded");
                 new Promise((resolve, reject) => {
                     paymentContext.setShow(true);
                     paymentContext.setPaymentStatus('otpExpired');
@@ -108,11 +108,21 @@ function PaymentForm() {
 
                 const redirectToMerchant = () => {
                     localStorage.removeItem("otp");
-                    let url = decodeURI(successUrl);
+                    let url = new URL(decodeURI(successUrl));;
+                    const paramsIterator = url.searchParams.entries();
+                    const hasParams = !paramsIterator.next().done;
+
+                    if (hasParams) {
+                        url += "&";
+                    }
+                    else {
+                        url += "?";
+                    }
+
                     const length = 10;
                     const randomString = Math.random().toString(36).substring(2, length + 2);
                     const transactionId = Date.now() + '-' + randomString;
-                    url += "orderId=" + orderId + "transactionId=" + transactionId + "&status=approved&message=" + encodeURI("Transaction processed Successfully");
+                    url += "orderId=" + orderId + "&transactionId=" + transactionId + "&status=approved&message=" + encodeURI("Transaction processed Successfully");
                     window.location.replace(url);
                 }
 

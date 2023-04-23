@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import logo from "../assets/logo.jpg";
 import "../components/utilities.css";
 import './OrderSuccessPage.css';
+import { Link } from "react-router-dom";
 
 function OrderSuccessPage() {
     const [orderDetails, setOrderDetails] = useState(null)
@@ -12,15 +13,9 @@ function OrderSuccessPage() {
 
     useEffect(() => {
         axios.get("http://localhost:8080/orders/" + urlParams.get("orderId")).then((response) => {
-            console.log(response.data);
             setOrderDetails(response.data);
         })
     }, [])
-
-    const getDecimalPlaces = (number) => {
-        var decimalPart = (number.toString().split('.')[1] || '').length;
-        return decimalPart;
-    }
 
     let total = 0;
     let status = null;
@@ -28,28 +23,26 @@ function OrderSuccessPage() {
     let deliveryCharge = 0;
     let commission = 0;
 
-    if(orderDetails){
+    if(orderDetails){    
         deliveryCharge = orderDetails.order.deliveryCharge;
         commission = orderDetails.order.commission;
         total = orderDetails.order.commission + orderDetails.order.deliveryCharge
         status = urlParams.get("status").charAt(0).toUpperCase() + urlParams.get("status").slice(1);
-        orderedItems = orderDetails.orderedItems.map((orderedItem) => {
-            const unitPriceDecimalPlaces = getDecimalPlaces(orderedItem.item.unitPrice);
-            const totalPriceDecimalPlaces = getDecimalPlaces(orderedItem.totalItemPrice);
+        orderedItems = orderDetails.orderedItems.map((orderedItem, i) => {
             total += orderedItem.totalItemPrice;
             return (
-                <ListGroup.Item>
+                <ListGroup.Item key={i}>
                     <div className="w-25p inline-block">
                         {orderedItem.item.name}
                     </div>
                     <div className="w-25p inline-block">
-                        {(unitPriceDecimalPlaces === 2) ? "Rs." + orderedItem.item.unitPrice : "Rs." + orderedItem.item.unitPrice + ".00"}
+                        {"Rs." + orderedItem.item.unitPrice.toFixed(2)}
                     </div>
                     <div className="w-25p inline-block">
                         {orderedItem.itemAmount}
                     </div>
                     <div className="w-25p inline-block">
-                        {(totalPriceDecimalPlaces === 2) ? "Rs." + orderedItem.totalItemPrice : "Rs." + orderedItem.totalItemPrice + ".00"}
+                        {"Rs." + orderedItem.totalItemPrice.toFixed(2)}
                     </div>
                 </ListGroup.Item>
             )
@@ -60,7 +53,7 @@ function OrderSuccessPage() {
         <>
             <Header showCart={false} />
             <div className="center">
-                <img src={logo} width={100} />
+                <Link to="/"><img src={logo} width={200} /></Link>
             </div>
             <h1 className="uppercase center m-1">Order Receipt</h1>
             <div className="m1 p1">
@@ -121,7 +114,7 @@ function OrderSuccessPage() {
                                 Delivery Charge
                             </div>
                             <div className="w-25p inline-block">
-                                {"Rs." + deliveryCharge + ".00"}
+                                {"Rs." + deliveryCharge.toFixed(2)}
                             </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
@@ -129,7 +122,7 @@ function OrderSuccessPage() {
                                 Service Charge
                             </div>
                             <div className="w-25p inline-block">
-                                {"Rs." + commission + ".00"}
+                                {"Rs." + commission.toFixed(2)}
                             </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
@@ -137,7 +130,7 @@ function OrderSuccessPage() {
                                 <b>Total</b>
                             </div>
                             <div className="w-25p inline-block">
-                                <b>{"Rs." + total + ".00"}</b>
+                                <b>{"Rs." + total.toFixed(2)}</b>
                             </div>
                         </ListGroup.Item>
                     </ListGroup>

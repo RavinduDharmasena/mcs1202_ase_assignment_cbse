@@ -1,60 +1,54 @@
-import { useEffect } from "react";
 import Header from "../components/Header";
-import axios from "axios";
 import { Card, ListGroup } from "react-bootstrap";
+import logo from "../assets/logo.jpg";
+import "../components/utilities.css";
+import './OrderSuccessPage.css';
+import { Link } from "react-router-dom";
 
 function OrderFailurePage() {
     const urlParams = new URLSearchParams(window.location.search);
-
-    useEffect(() => {
-        axios.get("http://localhost:8080/orders/" + urlParams.get("orderId")).then((response) => {
-            console.log(response.data);
-        })
-    }, [])
 
     let status = urlParams.get("status").charAt(0).toUpperCase() + urlParams.get("status").slice(1);
     return (
         <>
             <Header showCart={false} />
-            <h1 style={{ textTransform: "uppercase", textAlign: "center", margin: "1rem" }}>Transaction has been failed</h1>
-            <div style={{
-                height: "100%",
-                padding: "1rem",
-                margin: "1rem",
-                borderRadius: ".5rem"
-            }}>
-                <Card style={{ width: '70%',margin:"auto" }}>
-                    <Card.Header style={{textTransform:"uppercase",textAlign:"center"}}><b>Details</b></Card.Header>
+            <div className="center">
+                <Link to="/"><img src={logo} width={200} /></Link>
+            </div>
+            <h1  className="uppercase center m-1">Transaction has been failed</h1>
+            <div className="m1 p1">
+                <Card className="receipt-card">
+                    <Card.Header className="uppercase center"><b>Details</b></Card.Header>
                     <ListGroup variant="flush">
                         <ListGroup.Item>
-                            <div style={{ width: "35%", display: "inline-block" }}>
+                            <div className="w-55p inline-block">
                                 Order ID
                             </div>
-                            <div style={{ width: "65%", display: "inline-block" }}>
+                            <div className="w-45p inline-block">
                                 {urlParams.get("orderId")}
                             </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
-                            <div style={{ width: "35%", display: "inline-block" }}>
+                            <div className="w-55p inline-block">
                                 Transaction ID
                             </div>
-                            <div style={{ width: "65%", display: "inline-block" }}>
+                            <div className="w-45p inline-block">
                                 {urlParams.get("transactionId")}
                             </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
-                            <div style={{ width: "35%", display: "inline-block" }}>
+                            <div className="w-55p inline-block">
                                 Transaction Status
                             </div>
-                            <div style={{ width: "65%", display: "inline-block" }}>
+                            <div className="w-45p inline-block">
                                 {status}
                             </div>
                         </ListGroup.Item>
                         <ListGroup.Item>
-                            <div style={{ width: "35%", display: "inline-block" }}>
+                            <div className="w-55p inline-block">
                                 Error
                             </div>
-                            <div style={{ width: "65%", display: "inline-block" }}>
+                            <div className="w-45p inline-block">
                                 {decodeURI(urlParams.get("message"))}
                             </div>
                         </ListGroup.Item>

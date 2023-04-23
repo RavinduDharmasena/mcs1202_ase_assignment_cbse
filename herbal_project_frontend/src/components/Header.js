@@ -1,12 +1,11 @@
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo.jpg';
 import cart from '../assets/cart.png';
 import Badge from 'react-bootstrap/esm/Badge';
 import { useContext } from 'react';
 import { ShopContext } from '../ShopContext';
-import { Link } from 'react-router-dom';
 
 function Header(props) {
   const shopContext = useContext(ShopContext);

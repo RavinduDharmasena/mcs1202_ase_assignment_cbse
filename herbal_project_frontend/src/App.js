@@ -7,16 +7,11 @@ import { useEffect, useState } from 'react';
 import { ShopContext } from './ShopContext';
 import OrderSuccessPage from './pages/OrderSuccessPage';
 import OrderFailurePage from './pages/OrderFailurePage';
+import axios from 'axios';
 
 function App() {
   const [items, setItems] = useState([]);
   const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    if (localStorage.getItem("shoppingData")) {
-      setItems(JSON.parse(localStorage.getItem("shoppingData")).items);
-    }
-  },[]);
 
   const shopContextValues = { items: items, show: show, setShow: setShow, setItems: setItems, otherExpenses: [] }
 
