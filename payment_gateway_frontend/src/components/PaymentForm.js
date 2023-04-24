@@ -37,7 +37,7 @@ function PaymentForm() {
                 let now = new Date();
                 let expirationTime = new Date(now.getTime() + 60000);
                 localStorage.setItem("otpExpiry", expirationTime);
-                return {otp:otp,mobileNumber:response.data.mobileNumber};
+                return { otp: otp, mobileNumber: response.data.mobileNumber };
             }
         }).then((smsData) => {
             axios.post("http://localhost:8081/payment/sms", {
@@ -55,24 +55,28 @@ function PaymentForm() {
         })
     }
 
+    const getFailureUrl = () => {
+        let url = new URL(decodeURI(failureUrl));
+        const paramsIterator = url.searchParams.entries();
+        const hasParams = !paramsIterator.next().done;
+
+        if (hasParams) {
+            url += "&";
+        }
+        else {
+            url += "?";
+        }
+
+        const timestamp = Date.now();
+        const randomNumber = Math.floor(Math.random() * 1000000);
+        const transactionId = `${timestamp}-${randomNumber}`;
+        url += "orderId=" + orderId + "&transactionId=" + transactionId + "&status=declined&message=" + encodeURI("Transaction timeout is exceeded");
+        return url;
+    }
+
     const checkOtp = () => {
         if (otp === localStorage.getItem("otp")) {
             if (new Date() > new Date(localStorage.getItem('otpExpiry'))) {
-                let url = new URL(decodeURI(failureUrl));
-                const paramsIterator = url.searchParams.entries();
-                const hasParams = !paramsIterator.next().done;
-
-                if (hasParams) {
-                    url += "&";
-                }
-                else {
-                    url += "?";
-                }
-
-                const timestamp = Date.now();
-                const randomNumber = Math.floor(Math.random() * 1000000);
-                const transactionId = `${timestamp}-${randomNumber}`;
-                url += "orderId=" + orderId + "&transactionId=" + transactionId + "&status=declined&message=" + encodeURI("Transaction timeout is exceeded");
                 new Promise((resolve, reject) => {
                     paymentContext.setShow(true);
                     paymentContext.setPaymentStatus('otpExpired');
@@ -82,11 +86,10 @@ function PaymentForm() {
                 }).then(() => {
                     setTimeout(() => {
                         localStorage.removeItem("otp");
-                        window.location.replace(url);
+                        window.location.replace(getFailureUrl());
                     }, 3000);
                 })
-            }
-            else {
+            } else {
                 const showPaymentProcessDialog = () => {
                     return new Promise((resolve, reject) => {
                         paymentContext.setShow(true);
@@ -134,7 +137,18 @@ function PaymentForm() {
             }
         }
         else {
-            paymentContext.setPaymentStatus('processFailed');
+            new Promise((resolve, reject) => {
+                paymentContext.setShow(true);
+                paymentContext.setPaymentStatus('processFailed');
+                setTimeout(() => {
+                    resolve(true);
+                }, 3000)
+            }).then(() => {
+                setTimeout(() => {
+                    localStorage.removeItem("otp");
+                    window.location.replace(getFailureUrl());
+                }, 3000);
+            })
         }
         localStorage.removeItem("otp");
     }

@@ -34,6 +34,7 @@ function PaymentPage() {
         paymentModalBodyText = <Modal.Body>
             Payment is Failed. Please wait while we redirect to the merchant
         </Modal.Body>
+        header = "Payment Failed";
     }
     else if (paymentStatus === "paymentDataInvalid") {
         paymentModalBodyText = <Modal.Body>
