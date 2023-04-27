@@ -15,7 +15,7 @@ function OrderFailurePage() {
             <div className="center">
                 <Link to="/"><img src={logo} width={200} /></Link>
             </div>
-            <h1  className="uppercase center m-1">Transaction has been failed</h1>
+            <h1 className="uppercase center m-1">Transaction has been failed</h1>
             <div className="m1 p1">
                 <Card className="receipt-card">
                     <Card.Header className="uppercase center"><b>Details</b></Card.Header>
@@ -46,7 +46,7 @@ function OrderFailurePage() {
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <div className="w-55p inline-block">
-                                Error
+                                Message
                             </div>
                             <div className="w-45p inline-block">
                                 {decodeURI(urlParams.get("message"))}

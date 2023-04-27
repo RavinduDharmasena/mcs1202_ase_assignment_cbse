@@ -86,7 +86,7 @@ function OrderSuccessPage() {
                         </ListGroup.Item>
                         <ListGroup.Item>
                             <div className="w-55p inline-block">
-                                Error
+                                Message
                             </div>
                             <div className="w-45p inline-block">
                                 {decodeURI(urlParams.get("message"))}
